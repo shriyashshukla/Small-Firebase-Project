@@ -13,6 +13,7 @@ export default function Home() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: '', price: '' });
   const [total, setTotal] = useState(0);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Add item to database
   const addItem = async (e) => {
@@ -51,16 +52,30 @@ export default function Home() {
     await deleteDoc(doc(db, 'items', id));
   };
 
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-8 bg-gray-100'>
+    <main className={`flex min-h-screen flex-col items-center justify-between p-8 ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}>
       <div className='z-10 w-full max-w-3xl items-center justify-between font-mono text-sm '>
-        <h1 className='text-4xl p-4 text-center text-gray-800 font-bold'>Expense Tracker</h1>
-        <div className='bg-white p-6 rounded-lg shadow-lg'>
-          <form className='grid grid-cols-6 items-center text-black mb-4'>
+        <h1 className='text-4xl p-4 text-center font-bold'>Expense Tracker</h1>
+        <label className="relative inline-flex items-center cursor-pointer mb-4">
+          <input
+            className="sr-only peer"
+            type="checkbox"
+            checked={darkMode}
+            onChange={toggleDarkMode}
+          />
+          <div className="w-24 h-12 rounded-full ring-0 peer duration-500 outline-none bg-gray-200 overflow-hidden before:flex before:items-center before:justify-center after:flex after:items-center after:justify-center before:content-['☀️'] before:absolute before:h-10 before:w-10 before:top-1/2 before:bg-white before:rounded-full before:left-1 before:-translate-y-1/2 before:transition-all before:duration-700 peer-checked:before:opacity-0 peer-checked:before:rotate-90 peer-checked:before:-translate-y-full shadow-lg shadow-gray-400 peer-checked:shadow-lg peer-checked:shadow-gray-700 peer-checked:bg-[#383838] after:content-['🌑'] after:absolute after:bg-[#1d1d1d] after:rounded-full after:top-[4px] after:right-1 after:translate-y-full after:w-10 after:h-10 after:opacity-0 after:transition-all after:duration-700 peer-checked:after:opacity-100 peer-checked:after:rotate-180 peer-checked:after:translate-y-0"></div>
+        </label>
+        <div className={`p-6 rounded-lg shadow-lg ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
+          <form className='grid grid-cols-6 items-center mb-4'>
             <input
               value={newItem.name}
               onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-              className='col-span-3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className={`col-span-3 p-3 border rounded-lg focus:outline-none focus:ring-2 ${darkMode ? 'border-gray-600 bg-gray-800 text-white focus:ring-gray-500' : 'border-gray-300 bg-white text-black focus:ring-blue-500'}`}
               type='text'
               placeholder='Enter Item'
             />
@@ -69,7 +84,7 @@ export default function Home() {
               onChange={(e) =>
                 setNewItem({ ...newItem, price: e.target.value })
               }
-              className='col-span-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mx-3'
+              className={`col-span-2 p-3 border rounded-lg focus:outline-none focus:ring-2 mx-3 ${darkMode ? 'border-gray-600 bg-gray-800 text-white focus:ring-gray-500' : 'border-gray-300 bg-white text-black focus:ring-blue-500'}`}
               type='number'
               placeholder='Enter ₹ Price'
             />
@@ -85,11 +100,11 @@ export default function Home() {
             {items.map((item) => (
               <li
                 key={item.id}
-                className='flex justify-between bg-gray-200 rounded-lg p-4 shadow-sm'
+                className={`flex justify-between rounded-lg p-4 shadow-sm ${darkMode ? 'bg-gray-600' : 'bg-gray-200'}`}
               >
                 <div className='flex justify-between w-full'>
-                  <span className='capitalize text-gray-700'>{item.name}</span>
-                  <span className='text-gray-700'>₹{item.price}</span>
+                  <span className='capitalize'>{item.name}</span>
+                  <span>₹{item.price}</span>
                 </div>
                 <button
                   onClick={() => deleteItem(item.id)}
@@ -102,8 +117,8 @@ export default function Home() {
           </ul>
           {items.length > 0 && (
             <div className='flex justify-between p-3 mt-4 border-t border-gray-300'>
-              <span className='text-gray-700 font-bold'>Total</span>
-              <span className='text-gray-700 font-bold'>₹{total}</span>
+              <span className='font-bold'>Total</span>
+              <span className='font-bold'>₹{total}</span>
             </div>
           )}
         </div>
